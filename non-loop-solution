@@ -1,0 +1,12 @@
+esm <- read.csv('/Users/Sean/Downloads/missed-esm-master/missingRowsData.csv',stringsAsFactors=FALSE)
+require(plyr); require(dplyr)
+
+esm <- group_by(esm, esm.IDnum.w1, esm.fileDate.w1) %>%
+  mutate('rownr' = 1:n()) %>%
+  as.data.frame()
+
+tojoin <- expand.grid(unique(esm$esm.IDnum.w1), unique(esm$esm.fileDate.w1), 1:4)
+colnames(tojoin) <- c('esm.IDnum.w1', 'esm.fileDate.w1', 'rownr')
+
+esm <- join(esm, tojoin, type = 'full') %>%
+  arrange(esm.IDnum.w1, esm.fileDate.w1, rownr)
