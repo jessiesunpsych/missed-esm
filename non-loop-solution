@@ -1,12 +1,14 @@
-esm <- read.csv('/Users/Sean/Downloads/missed-esm-master/missingRowsData.csv',stringsAsFactors=FALSE)
-require(plyr); require(dplyr)
+esm <- read.csv('/Users/Sean/Downloads/missed-esm-27ac122e5bf9c7bcd0d565a9ff7301d474ef9f3d/missingRowsData.csv',stringsAsFactors=FALSE)
+require(plyr); require(dplyr); require(reshape2)
 
-esm <- group_by(esm, esm.IDnum.w1, esm.fileDate.w1) %>%
-  mutate('rownr' = 1:n()) %>%
-  as.data.frame()
 
-tojoin <- expand.grid(unique(esm$esm.IDnum.w1), unique(esm$esm.fileDate.w1), 1:4)
-colnames(tojoin) <- c('esm.IDnum.w1', 'esm.fileDate.w1', 'rownr')
+# You had one duplicate observation within a specific time period that would break the melt so this removes both rows
+esm <- group_by(esm, esm.IDnum.w1, esm.fileDate.w1, esm.PRO03.w1) %>%
+  filter(n() < 2)
+  
+# Casting the data automatically fills in NAs where you want them
+esm <- dcast(esm, ... ~ esm.PRO03.w1)
+# Melting it back into original shape
+esm <- melt(esm, id.vars = 1:2, na.rm = FALSE, value.name = 'esm.PRO02.w1', variable = 'esm.PRO03.w1')
 
-esm <- join(esm, tojoin, type = 'full') %>%
-  arrange(esm.IDnum.w1, esm.fileDate.w1, rownr)
+esm <- arrange(esm, esm.IDnum.w1, esm.fileDate.w1, variable)
