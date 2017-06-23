@@ -90,7 +90,7 @@ esm <- setorder(esm,esm.IDnum.w1,esm.fileDate.w1,esm.PRO03.w1)
 # The code above inserted "missing" reports for all hour blocks, but participants may have only
 # started the study at hour block 2, 3 or 4
 # So, if they started the study at hour block 3, they did not actually miss hour blocks 1 & 2
-# because they had not yet started teh study at that point
+# because they had not yet started the study at that point
 
 # Get first days for each participant
 
